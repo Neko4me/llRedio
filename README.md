@@ -20,7 +20,8 @@ llRedio的Django后端分为几个功能。
 返回json格式大体如下：   
 
     {
-        type: "anime", //表示哪几类
+        type: "type", //表示哪几类
+        detail: "anime",
         page: 1, //歌曲页数，下一次获取时page+1
         musicList: [
             {
@@ -41,6 +42,29 @@ llRedio的Django后端分为几个功能。
         
     }
 
+
+请求后端json如下：
+
+    {
+        type: "type",
+        detail: "nc", //脑残类
+        page: 0,　//大概不会分页，具体再说吧
+    }
+
+
+    {
+        type: "singer",
+        detail: "初音ミク",
+        page: 2,
+    }
+    
+
+    {
+        type: "album",
+        detail: "梦游计",
+        page: 2,
+    }
+
 ###前端构建
 llRedio的前端要做的很！精！致！    
 支持Chrome/Opera/FireFox/IE11。   
@@ -56,6 +80,6 @@ llRedio的前端要做的很！精！致！
 技术选型是基于HTML5+CSS3+基于jQuery。    
 
 ###吐槽
-<del>实际上我只想做动漫类的</del>    
-<del>期末快挂科了</del>    
-<del>大概这个项目不会夭折</del>
+<del>实际上我只想做动漫类的    </del>    
+<del>期末快挂科了    </del>    
+<del>大概这个项目不会夭折    </del>
