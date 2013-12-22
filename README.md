@@ -1,10 +1,17 @@
 llRedio
 =======
+##更新日志
+####2013/12/22
+
+    写了许多代码，包括后端的Search以及前端的音乐控制的class。暂时结构还没分出来，都集成在一个HTML里。
+    现在遇到一个瓶颈就是无法播放wma的音频文件。以至于mp3的文件呢是3M+的，在Chrome的network下竟然直接挂了（403错误），Opera下下载到1M也就挂了。一边加载一边播放的方式还搞不定，难道要集成Flash进去么?(残念
+    想不出解决办法之前也不想做了。现在有的细节还没做好，比如hover到歌手的头像上出来的暂停按钮还不是居中的(暂时也不知道怎么写下去..
+    啊，欢迎贡献代码。求帮助QuQ
 
 一个Django框架下的开源在线听歌平台。   
 
 ###坑
-llRedio基于Django，主要是我要练手一下Django REST Freamwork。    
+llRedio基于Django，<del>主要是我要练手一下Django REST Freamwork。</del>    
 当然用不用Django REST Freamwork方式来做我也不知道。最近期末考试也没时间。   
 所以先挖一个坑好了。
 
@@ -80,8 +87,7 @@ llRedio的前端要做的很！精！致！
 技术选型是基于HTML5+CSS3+基于jQuery。    
 
 ###吐槽
-<del>实际上我只想做动漫类的</del>    
 
-<del>期末快挂科了</del>    
-
-<del>大概这个项目不会夭折</del>   
++ <del>实际上我只想做动漫类的</del>    
++ <del>期末快挂科了</del>    
++ <del>大概这个项目不会夭折</del>   
