@@ -1,0 +1,362 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>llRedio</title>
+		<style>
+			* {
+				padding: 0px;
+				margin: 0px;
+			}
+
+			body {
+				overflow: hidden;
+                font-family:Tahoma, Helvetica, "Microsoft Yahei", "微软雅黑", Arial, STHeiti;
+                /*min-width: ;*/
+			}
+
+
+			.imgbox {
+				position: absolute;
+				z-index: -1;
+				top: 0;
+				left: 0;
+			}
+
+			.imgbox > img.blur {
+				-webkit-filter:blur(3px);
+     	 	    -webkit-transition: -webkit-filter .3s ease;
+			}
+
+			.lay-img {
+				opacity:0;
+				transition: opacity 0.8s ease;
+				-moz-transition: opacity 0.8s ease;
+				-webkit-transition: opacity 0.8s ease;
+			}
+
+			.lay-img-fade-out {
+				opacity:1;
+			}
+
+			.musicInfoDiv {
+				margin: 0 auto;
+			}
+
+			.album-img {
+				display: inline-block;
+				max-width: 250px;
+				max-height: 250px;
+			}
+
+			.album-img > img.album-img {
+				height: 100%;
+				box-shadow: 0px 0px 30px #000;
+        		transition: -webkit-filter 0.3s ease;  
+      			-moz-transition: -webkit-filter 0.3s ease;
+     	 	    -webkit-transition: -webkit-filter 0.3s ease; 
+				transition: opacity 0.8s ease;
+				-moz-transition: opacity 0.8s ease;
+				-webkit-transition: opacity 0.8s ease;
+			}
+
+			.album-img:hover .icon{
+				display: inline-block;
+				margin: 0 auto;
+			}
+
+			.album-img:hover > img.album-img {
+				-webkit-filter:blur(2px);
+			}
+
+			.block {
+				background: #000;	
+				opacity: 0;
+				padding: 50px;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				z-index: -1;
+				transition: opacity 0.8s ease;
+				-moz-transition: opacity 0.8s ease;
+				-webkit-transition: opacity 0.8s ease;
+				top: 0;
+				left: 0;
+			}
+
+			.sing-info {
+				vertical-align: top;
+				display: inline-block;
+				color: #FFF;
+				height: inherit;
+				padding: 0 0 0 20px;
+			}
+
+			.sing-info h1, .sing-info h3, .sing-info h4{
+				font-weight: 300;
+				font-size: 30px;
+				display: inline;
+			}
+
+			.sing-info h1  {
+				font-size: 50px;
+			}
+
+			.sing-info h4 {
+				font-size: 20px;
+			}
+
+			.sing-info div {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				width: 100%;
+				max-width: 400px;
+				margin: 0 0 20px 0;
+			}
+
+			.sing-info > div:after {
+				display: inline-block;
+			}
+
+			.musicInfoDiv {
+				margin: 10% auto;
+				width: 60%;
+				
+			}
+
+			.musicInfoDiv > .container {
+				margin: 50px;
+				position: relative;
+				transition: all 1s ease-out;
+				-moz-transition: all 1s ease-out;
+				-webkit-transition: all 1s ease-out;
+			}
+
+			#goTotop {
+				margin-top: -100px;
+			}
+
+			.musicPlayDiv {
+				width: 60%;
+				margin: 0 auto;
+				transition: height 0.8s ease;
+				-moz-transition: height 0.8s ease;
+				-webkit-transition: height 0.8s ease;
+			}
+
+			.right {
+				opacity: 0;
+				right: -300px;
+			}
+
+			.left {
+				opacity: 1;
+				left: 0;
+			}
+
+			.icon {
+				display: none;
+				position: absolute;
+				z-index: 1;
+			}
+
+
+			@media screen and (min-width:0\0) {
+
+				.musicInfoDiv {
+					width: 60%;
+				}
+
+			}
+
+			@media screen and (max-width: 980px) {
+				.album-img {
+					width: 100%;
+					margin: 20px 0;			
+				}
+
+				.block {
+					position: absolute;
+					top: 0;
+					width: 100%;
+					height: 100%;
+				}
+
+				.musicInfoDiv {
+					padding: 0px;
+					margin-top: 100px;
+				}
+
+				.musicInfoDiv > .container {
+					margin:0 auto;
+				}
+
+				.musicInfoDiv > .container > div {
+					margin: 0 auto;
+					display: block;
+				}
+
+				.musicPlayDiv {
+					width: 100%;
+					position: absolute;
+					bottom: 0;
+				}
+
+				.sing-info {
+					padding-top: 40px;
+				}
+
+				.sing-info > div {
+					text-align: center;
+					padding:  0;
+					margin: 0 auto;
+				}
+
+			}
+		</style>
+		<script src="{% static "jquery.js" %}"></script>
+		<script>
+			var musicControl = {
+				musicIndex: 0,
+				musicMaxIndex: 0,
+				musicData: '',
+				musicList: [],
+				musicPage: 1,
+				musicKeyword: "初音",
+				checkData: function(){
+					if (this.musicData["code"] == 0) {
+						this.musicList = this.musicData["list"];
+						this.musicMaxIndex = this.musicList.length;
+						this.musicIndex = 0;
+						this.setMusicData(this.musicList[0]);
+					};
+				},
+				getMusicList: function(isSync) {
+					isSync?isSync=true:isSync=false;
+					musicPage = this.musicPage;
+					musicKeyword = this.musicKeyword;
+				    $.ajax({
+						url: "/search/?keyword=" + musicKeyword + "&p=" + musicPage,
+						dataType: "json",
+						async: isSync,
+						success: function(data){
+							musicControl.musicData = data;
+							musicControl.checkData()
+						}
+					});
+				},
+				next: function(){
+					if (this.musicIndex < this.musicMaxIndex - 1) {
+						this.musicIndex += 1;
+						this.changeMusic(this.musicList[this.musicIndex]);
+					} else {
+						this.musicPage += 1;
+						this.getMusicList();
+					}
+
+				},
+				prev: function(){
+					if (this.musicIndex >= 1) {
+						this.musicIndex -= 1;
+						this.changeMusic(this.musicList[this.musicIndex]);
+					}
+				},
+				changeMusic: function(musicDict) {
+					_this = this;
+					$(".musicInfoDiv > .container").addClass("right");
+					setTimeout(function(){
+						_this.setMusicData(musicDict);
+						setTimeout(function(){$(".musicInfoDiv > .container").removeClass("right")}, 200);
+					}, 1200);
+				},
+				setMusicData: function(musicDict){
+					$(".music-title").html("<h1>" + musicDict["musicTitle"] + "</h1>");
+					$(".music-singer").html("<h3>"+ musicDict["singer"] + "</h3>");
+					$(".music-album").html("<h4>" + musicDict["album"] + "</h4>");
+					$("img.album-img").attr("src", musicDict["singerImg"]);
+					this.getMusicUrl(musicDict["musicID"]);
+					//$("img.album-img").css("opacity", "0");
+					//setTimeout(function(){$("img.album-img").attr("src", musicDict["singerImg"])}, 800);
+					//setTimeout(function(){$("img.album-img").css("opacity", "1");}, 1200);
+				},
+				getMusicUrl: function(musicID){
+				    $.ajax({
+						url: "/musicurl/?musicid=" + musicID,
+						dataType: "json",
+						success: function(data){
+							if (data["code"] == 0) {
+								$("audio").attr("src", data["url"]);
+							} else {
+								musicControl.next();
+							}
+						}
+					});
+				}
+			}
+
+
+			/* 特效 */
+
+			function resizeWindow() {
+				//窗口背景图适应
+				var windowWitdh = $(window).width();
+				var windowHeight = $(window).height();
+				var imgboxHeight = $('.imgbox').height();
+				var imgboxWidth = $('.imgbox').width();
+				if (windowHeight / windowWitdh < imgboxHeight / imgboxWidth ) {
+					$('#background').css("height", "");
+					$('#background').width(windowWitdh);
+				} else {
+					$('#background').height(windowHeight);
+					$('#background').css("width", "");
+				}
+			}
+
+			$(window).resize(function(){
+ 				resizeWindow();
+			});
+
+			$(window).load(function(){
+				resizeWindow();
+				musicControl.getMusicList(false);
+				$(".lay-img").addClass("lay-img-fade-out");
+				setTimeout(function(){$(".block").css("opacity", "0.5");}, 800);
+				setTimeout(function(){$(".musicInfoDiv > .container").attr("id", "goTotop")}, 1600);
+				setTimeout(function(){$(".imgbox > img").addClass("blur")}, 2400);
+				setTimeout(function(){$(".musicPlayDiv").css("height", "120px");}, 3200);
+			});
+
+			window.onmousewheel=function(){return false}; 
+			//Chrome下overflow不起作用
+		</script>
+	</head>
+
+	<body>
+		<div class="imgbox">
+			<img id="background" class="lay-img" src="{% static "./llRedio/miku/miku-1.jpg" %}" />
+		</div>
+		<div class="container">
+            <div class="musicInfoDiv">
+            	<div class="block"></div>
+            	<div class="container" id="music">
+            		<div class="album-img">
+            			<img class="icon" src="{% static "play.png" %}" />
+            			<img class="lay-img album-img" src="" />
+            		</div>
+            		<div class="sing-info">
+            			<div class="music-title"><h1></h1></div>
+            			<div class="music-singer"><h3></h3></div>
+            			<div class="music-album"><h4></h4></div>
+            		</div>
+            		<audio src="" autoplay="true"></audio>
+           		</div>
+            </div>
+            <div class="musicPlayDiv">
+
+            </div>
+		</div>
+	</body>
+</html>

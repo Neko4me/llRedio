@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     url(r'^$', 'llRedioWeb.views.IndexHandler', name='IndexHandler'),
     url(r'^type/$', 'llRedioWeb.views.TypeHandler', name='TypeHandler'),
     url(r'^search/$', 'llRedioWeb.views.SearchHandler', name='SearchHandler'),
+    url(r'^musicurl/$', 'llRedioWeb.views.MusicHandler', name='MusicHandler'),
 )
