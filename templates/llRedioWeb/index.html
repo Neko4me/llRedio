@@ -136,7 +136,7 @@
 			}
 
 			#goTotop {
-				margin-top: -100px;
+				margin-top: -10%;
 			}
 
 			.musicPlayDiv {
@@ -277,14 +277,14 @@
 					$(".music-singer").html("<h3>"+ musicDict["singer"] + "</h3>");
 					$(".music-album").html("<h4>" + musicDict["album"] + "</h4>");
 					$("img.album-img").attr("src", musicDict["singerImg"]);
-					this.getMusicUrl(musicDict["musicID"]);
+					this.getMusicUrl(musicDict["musicMid"]);
 					//$("img.album-img").css("opacity", "0");
 					//setTimeout(function(){$("img.album-img").attr("src", musicDict["singerImg"])}, 800);
 					//setTimeout(function(){$("img.album-img").css("opacity", "1");}, 1200);
 				},
-				getMusicUrl: function(musicID){
+				getMusicUrl: function(musicMid){
 				    $.ajax({
-						url: "/musicurl/?musicid=" + musicID,
+						url: "/musicurl/?musicMid=" + musicMid,
 						dataType: "json",
 						success: function(data){
 							if (data["code"] == 0) {
@@ -346,6 +346,10 @@
             			<img class="icon" src="{% static "play.png" %}" />
             			<img class="lay-img album-img" src="" />
             		</div>
+            		<!--<div class="album-img">
+            			<img class="icon" src="{% static "play.png" %}" />
+            			<img class="lay-img album-img" src="" />
+            		</div>-->
             		<div class="sing-info">
             			<div class="music-title"><h1></h1></div>
             			<div class="music-singer"><h3></h3></div>
