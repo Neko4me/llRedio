@@ -45,10 +45,11 @@
 				margin: 0 auto;
 			}
 
-			.album-img {
+			div.album-img {
+				margin: 0 20px 20px 0;
 				display: inline-block;
-				max-width: 250px;
-				max-height: 250px;
+				width: 250px;
+				height: 250px;
 			}
 
 			.album-img > img.album-img {
@@ -62,10 +63,6 @@
 				-webkit-transition: opacity 0.8s ease;
 			}
 
-			.album-img:hover .icon{
-				display: inline-block;
-				margin: 0 auto;
-			}
 
 			.album-img:hover > img.album-img {
 				-webkit-filter:blur(2px);
@@ -87,34 +84,35 @@
 			}
 
 			.sing-info {
+				padding: 20px;
+				background: #000;
+				opacity: 0.5;
 				vertical-align: top;
 				display: inline-block;
 				color: #FFF;
 				height: inherit;
-				padding: 0 0 0 20px;
+				box-shadow: 0px 0px 20px #000;
 			}
 
 			.sing-info h1, .sing-info h3, .sing-info h4{
 				font-weight: 300;
-				font-size: 30px;
+				font-size: 2em;
 				display: inline;
 			}
 
 			.sing-info h1  {
-				font-size: 50px;
+				font-size: 3em;
 			}
 
 			.sing-info h4 {
-				font-size: 20px;
+				font-size: 1.25em;
 			}
 
-			.sing-info div {
+			.sing-info > div {
 				white-space: nowrap;
 				text-overflow: ellipsis;
 				overflow: hidden;
-				width: 100%;
-				max-width: 400px;
-				margin: 0 0 20px 0;
+				width: 400px;
 			}
 
 			.sing-info > div:after {
@@ -122,9 +120,8 @@
 			}
 
 			.musicInfoDiv {
-				margin: 10% auto;
-				width: 60%;
-				
+				margin: 10% auto 0 auto;
+				width: 500px;
 			}
 
 			.musicInfoDiv > .container {
@@ -136,33 +133,68 @@
 			}
 
 			#goTotop {
-				margin-top: -10%;
+				margin-top: -15%;
 			}
 
-			.musicPlayDiv {
-				width: 60%;
-				margin: 0 auto;
-				transition: height 0.8s ease;
-				-moz-transition: height 0.8s ease;
-				-webkit-transition: height 0.8s ease;
-			}
 
 			.right {
 				opacity: 0;
 				right: -300px;
+				transition: right 1s ease-out;
+				-moz-transition: right 1s ease-out;
+				-webkit-transition: right 1s ease-out;
 			}
 
-			.left {
-				opacity: 1;
-				left: 0;
+
+			.music-play {
+				display: none;
+			}
+
+			.music-pause {
+
+			}
+
+			.music-next {
+
 			}
 
 			.icon {
-				display: none;
-				position: absolute;
-				z-index: 1;
+				margin: 10px 20px 0 0 ;
 			}
 
+			.music-icon-container {
+				margin: 0 auto;
+			}
+
+			.music-progress-bar {
+				color: #FFF;
+			}
+
+			#nowtime, #totaltime {
+				display: inline-block;
+				line-height: 15px;
+				font-size: 15px;
+			}
+
+			#totaltime {
+				float: right;
+			}
+
+			#nowtime {
+				float: left;
+			}
+
+			#bar-container {
+				background: #FFF;
+				margin: 25px 0 0 0;
+				height: 8px;
+				width: 100%;
+			}
+
+			#progress {
+				background: #333;
+				height: 100%;
+			}
 
 			@media screen and (min-width:0\0) {
 
@@ -206,13 +238,20 @@
 				}
 
 				.sing-info {
+					background: none;
 					padding-top: 40px;
+					opacity: 1;
+					box-shadow: none;
 				}
 
 				.sing-info > div {
 					text-align: center;
 					padding:  0;
 					margin: 0 auto;
+				}
+
+				#bar-container {
+					opacity: 0.5;
 				}
 
 			}
@@ -225,19 +264,20 @@
 				musicData: '',
 				musicList: [],
 				musicPage: 1,
-				musicKeyword: "初音",
+				musicKeyword: "五月天",
 				checkData: function(){
 					if (this.musicData["code"] == 0) {
 						this.musicList = this.musicData["list"];
 						this.musicMaxIndex = this.musicList.length;
 						this.musicIndex = 0;
 						this.setMusicData(this.musicList[0]);
+						this.musicPlay();
 					};
 				},
 				getMusicList: function(isSync) {
 					isSync?isSync=true:isSync=false;
-					musicPage = this.musicPage;
-					musicKeyword = this.musicKeyword;
+					var musicPage = this.musicPage;
+					var musicKeyword = this.musicKeyword;
 				    $.ajax({
 						url: "/search/?keyword=" + musicKeyword + "&p=" + musicPage,
 						dataType: "json",
@@ -256,7 +296,6 @@
 						this.musicPage += 1;
 						this.getMusicList();
 					}
-
 				},
 				prev: function(){
 					if (this.musicIndex >= 1) {
@@ -265,7 +304,7 @@
 					}
 				},
 				changeMusic: function(musicDict) {
-					_this = this;
+					var _this = this;
 					$(".musicInfoDiv > .container").addClass("right");
 					setTimeout(function(){
 						_this.setMusicData(musicDict);
@@ -278,22 +317,44 @@
 					$(".music-album").html("<h4>" + musicDict["album"] + "</h4>");
 					$("img.album-img").attr("src", musicDict["singerImg"]);
 					this.getMusicUrl(musicDict["musicMid"]);
-					//$("img.album-img").css("opacity", "0");
-					//setTimeout(function(){$("img.album-img").attr("src", musicDict["singerImg"])}, 800);
-					//setTimeout(function(){$("img.album-img").css("opacity", "1");}, 1200);
 				},
 				getMusicUrl: function(musicMid){
 				    $.ajax({
 						url: "/musicurl/?musicMid=" + musicMid,
 						dataType: "json",
 						success: function(data){
-							if (data["code"] == 0) {
-								$("audio").attr("src", data["url"]);
-							} else {
-								musicControl.next();
-							}
+							data["code"] == 0?$("audio").attr("src", data["url"]):musicControl.next();
 						}
 					});
+				},
+				musicPause: function(){
+					$(".music-play").show();$(".music-pause").hide();
+					$("audio")[0].pause();
+				},
+				musicContinue: function(){
+					$(".music-pause").show();$(".music-play").hide();
+					$("audio")[0].play();
+				},
+				musicPlay: function(){
+					$(".music-pause").show();$(".music-play").hide();
+					$("audio")[0].addEventListener("canplay", function(){
+						var allTime = Math.ceil($("audio")[0].duration),
+							secs = allTime % 60,
+							mins = (allTime - secs) / 60,
+							timeFormat = secs<10?mins+':0'+secs:mins+':'+secs;
+						$("#totaltime").text(timeFormat);
+   						$("audio")[0].play();
+					},false);
+					$("audio")[0].addEventListener("timeupdate",function(){
+						var nowTime = $("audio")[0].currentTime,
+    						totalTime = $("audio")[0].duration,
+    						pWidth = (nowTime/totalTime)*100,
+    						nSecs = Math.ceil(nowTime)%60,
+    						nMins = Math.ceil(nowTime)-nSecs<=0 ? '0' : (Math.ceil(nowTime)-nSecs)/60;
+    						timeFormat = nSecs<10?nMins+":0"+nSecs:nMins+":"+nSecs;
+   				    	$("#nowtime").text(timeFormat);
+    					$("#progress").css({"width": pWidth+"%"});
+					},false);
 				}
 			}
 
@@ -327,10 +388,21 @@
 				setTimeout(function(){$(".musicInfoDiv > .container").attr("id", "goTotop")}, 1600);
 				setTimeout(function(){$(".imgbox > img").addClass("blur")}, 2400);
 				setTimeout(function(){$(".musicPlayDiv").css("height", "120px");}, 3200);
+				$(".music-play").click(function(){
+					musicControl.musicContinue();
+				});
+				$(".music-pause").click(function(){
+					musicControl.musicPause();
+				});
+				$(".music-next").click(function(){
+					musicControl.musicPause();
+					musicControl.next();
+					musicControl.musicContinue();
+				})
 			});
 
-			window.onmousewheel=function(){return false}; 
-			//Chrome下overflow不起作用
+			/* 事件 */
+			window.onmousewheel=function(){return false}; //Chrome下overflow不起作用
 		</script>
 	</head>
 
@@ -341,26 +413,31 @@
 		<div class="container">
             <div class="musicInfoDiv">
             	<div class="block"></div>
-            	<div class="container" id="music">
+            	<div class="container lay-img" id="music">
             		<div class="album-img">
-            			<img class="icon" src="{% static "play.png" %}" />
-            			<img class="lay-img album-img" src="" />
+            			<img class="album-img" src="" />
             		</div>
-            		<!--<div class="album-img">
-            			<img class="icon" src="{% static "play.png" %}" />
-            			<img class="lay-img album-img" src="" />
-            		</div>-->
             		<div class="sing-info">
             			<div class="music-title"><h1></h1></div>
             			<div class="music-singer"><h3></h3></div>
             			<div class="music-album"><h4></h4></div>
+            			<div class="music-progress-bar">
+            				<div id="nowtime">0:00</div>
+            				<div id="totaltime">0:00</div>
+            				<div id="bar-container">
+            					<div id="progress"></div>
+            				</div>
+            			</div>
+             		    <div class="music-icon-container">
+             		    	<img class="music-pause icon" src="{% static "pause.png" %}" />
+            				<img class="music-play icon" src="{% static "play.png" %}" />
+            				<img class="music-next icon" src="{% static "next.png" %}" />
+            			</div>
             		</div>
-            		<audio src="" autoplay="true"></audio>
+            		<audio src="" autoplay="false" onended="musicControl.next()"></audio>
            		</div>
             </div>
-            <div class="musicPlayDiv">
 
-            </div>
 		</div>
 	</body>
 </html>
